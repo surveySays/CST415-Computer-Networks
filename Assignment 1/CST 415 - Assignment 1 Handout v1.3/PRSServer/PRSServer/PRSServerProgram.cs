@@ -257,22 +257,55 @@ namespace PRSServer
 
         static void Main(string[] args)
         {
-            // TODO: PRSServerProgram.Main()
-
+            
             // defaults
             ushort SERVER_PORT = 30000;
             ushort STARTING_CLIENT_PORT = 40000;
             ushort ENDING_CLIENT_PORT = 40099;
             int KEEP_ALIVE_TIMEOUT = 300;
 
-            //TODO BRENNEN //////////////////////////////////////////////////////////////////
             // process command options
             // -p < service port >
             // -s < starting client port number >
             // -e < ending client port number >
             // -t < keep alive time in seconds >
 
-            // check for valid STARTING_CLIENT_PORT and ENDING_CLIENT_PORT
+            //process command options
+            try
+            {
+                for (int i = 0; i < args.Length; ++i)
+                {
+                    if (args[i] == "-p")
+                    {
+                        SERVER_PORT = ushort.Parse(args[i + 1]);
+                    }
+
+                    if (args[i] == "-s")
+                    {
+                        STARTING_CLIENT_PORT = ushort.Parse(args[i + 1]);
+                    }
+
+                    if (args[i] == "-e")
+                    {
+                        ENDING_CLIENT_PORT = ushort.Parse(args[i + 1]);
+                    }
+
+                    if (args[i] == "-t")
+                    {
+                        KEEP_ALIVE_TIMEOUT = Int32.Parse(args[i + 1]);
+                    }
+                }
+
+                // check for valid STARTING_CLIENT_PORT and ENDING_CLIENT_PORT
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+
+            
 
             // initialize the PRS server
             PRS prs = new PRS(STARTING_CLIENT_PORT, ENDING_CLIENT_PORT, KEEP_ALIVE_TIMEOUT);

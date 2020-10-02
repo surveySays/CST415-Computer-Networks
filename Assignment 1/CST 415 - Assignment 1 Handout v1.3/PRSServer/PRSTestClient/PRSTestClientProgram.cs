@@ -26,12 +26,6 @@ namespace PRSTestClient
             Console.WriteLine("usage: PRSTestClient [options]");
             Console.WriteLine("\t-prs <serverIP>:<serverPort>");
         }
-
-        static void PrintChoices(int prs_port, int server_port, int ending_port, int timeout)
-        {
-            Console.WriteLine("PRS PORT: " + prs_port + ", " + "SERVER PORT: " + server_port + ", " + "ENDING PORT: " + ending_port + ", " + "TIMEOUT: " + timeout + "\n\n");
-   
-        }
       
 
         static void Main(string[] args)
@@ -39,45 +33,28 @@ namespace PRSTestClient
            
             // defaults
             string SERVER_IP = "127.0.0.1";
-            int PRS_PORT = 40000;
             int SERVER_PORT = 30000;
-            int ENDING_PORT = 40099;
-            int TIMEOUT = 10;
+    
 
-
-            try
-            {
-                for (int i = 0; i < args.Length; ++i)
-                {
-                    if (args[i] == "-p")
-                    {
-                        PRS_PORT = Int32.Parse(args[i + 1]);
-                    }
-
-                    if (args[i] == "-s")
-                    {
-                        SERVER_PORT = Int32.Parse(args[i + 1]);
-                    }
-
-                    if (args[i] == "-e")
-                    {
-                        ENDING_PORT = Int32.Parse(args[i + 1]);
-                    }
-
-                    if (args[i] == "-t")
-                    {
-                        TIMEOUT = Int32.Parse(args[i + 1]);
-                    }
-                }
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
             //process command options
-       
+            //try
+            //{
+            //    for (int i = 0; i < args.Length; ++i)
+            //    {
+            //        if (args[i] == "-prs")
+            //        {
+            //            SERVER_IP = (args[i + 1]);
+            //            SERVER_PORT = Int32.Parse(args[i + 1]);
+            //        }
+            //    }
 
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine(ex.Message);
+            //}
+            
+       
             // tell user what we're doing
             Console.WriteLine("Test Client started...");
             Console.WriteLine("  ServerIP = " + SERVER_IP.ToString());
@@ -86,7 +63,6 @@ namespace PRSTestClient
             // recommend proper PRSServer command line arguments
             Console.WriteLine();
             Console.WriteLine("Assumes the PRSServer is running with the following command line arguments:");
-            PrintChoices(PRS_PORT, SERVER_PORT, ENDING_PORT, TIMEOUT);
 
             // create the socket for sending messages to the server
             Socket clientSocket = new Socket(SocketType.Dgram, ProtocolType.Udp);
@@ -94,16 +70,13 @@ namespace PRSTestClient
             // construct the server's address and port
             IPEndPoint serverEP = new IPEndPoint(IPAddress.Parse(SERVER_IP), SERVER_PORT);
 
-            //
-            // Implement test cases
-            //
-
+          
             try
             {
                 // call each test case method
                 TestCase1(clientSocket, serverEP); //PASSED
-                TestCase2(clientSocket, serverEP);
-                TestCase3(clientSocket, serverEP);
+                TestCase2(clientSocket, serverEP); //PASSED
+                TestCase3(clientSocket, serverEP); //PASSED
 
             }
             catch (Exception ex)
@@ -239,14 +212,34 @@ namespace PRSTestClient
 
         private static void TestCase4(Socket clientSocket, IPEndPoint endPt)
         {
-            // TODO: PRSTestClientProgram.TestCase4()
-
             // Simulates two PRS clients, SVC1 and SVC2, where SVC1 requests a port, SVC1 fails to keep the port alive, then SVC2 requests a port and receives SVC1’s expired port.
 
             Console.WriteLine("TestCase 4 Started...");
 
-            // See test cases doc
-            // use Thread.Sleep();
+            // {REQUEST_PORT, “SVC1”, 0, 0} send message
+            PRSMessage msg = new PRSMessage(PRSMessage.MESSAGE_TYPE.REQUEST_PORT, "SVC1", 0, 0);
+            SendMessage(clientSocket, endPt, msg);
+
+            // {RESPONSE, “SVC1”, 40000, SUCCESS} recieve message
+            ExpectMessage(clientSocket, "{RESPONSE, SVC1, 40000, SUCCESS}");
+
+            //sleep for 15 sec'
+            Console.WriteLine("Sleeping for 15 seconds...");
+            Thread.Sleep(15000);
+
+            // {REQUEST_PORT, “SVC1”, 0, 0} send message
+            msg = new PRSMessage(PRSMessage.MESSAGE_TYPE.REQUEST_PORT, "SVC2", 0, 0);
+            SendMessage(clientSocket, endPt, msg);
+
+            // {RESPONSE, “SVC2”, 40000, SUCCESS} recieve message
+            ExpectMessage(clientSocket, "{RESPONSE, SVC2, 40000, SUCCESS}");
+
+            // {REQUEST_PORT, “SVC2”, 40000, 0} send message
+            msg = new PRSMessage(PRSMessage.MESSAGE_TYPE.CLOSE_PORT, "SVC2", 40000, 0);
+            SendMessage(clientSocket, endPt, msg);
+
+            // {RESPONSE, “SVC2”, 40000, SUCCESS} recieve message
+            ExpectMessage(clientSocket, "{RESPONSE, SVC2, 40000, SUCCESS}");
 
             Console.WriteLine("TestCase 4 Passed!");
             Console.WriteLine();
