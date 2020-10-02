@@ -215,6 +215,21 @@ namespace PRSServer
                             // find the port
                             // if found, send port number back
                             // else, SERVICE_NOT_FOUND
+
+                            // find the reserve port by port # and serviceName
+                            PortReservation reservation = ports.FirstOrDefault(p => !p.Available && p.ServiceName == msg.ServiceName);
+
+
+                            // if found, keep it alive and send SUCCESS
+                            if (reservation != null)
+                            {
+                                response = new PRSMessage(PRSMessage.MESSAGE_TYPE.RESPONSE, msg.ServiceName, reservation.Port, PRSMessage.STATUS.SUCCESS);
+
+                            }
+                            else
+                            {
+                                response = new PRSMessage(PRSMessage.MESSAGE_TYPE.RESPONSE, msg.ServiceName, msg.Port, PRSMessage.STATUS.SERVICE_NOT_FOUND);
+                            }
                         }
                         break;
 

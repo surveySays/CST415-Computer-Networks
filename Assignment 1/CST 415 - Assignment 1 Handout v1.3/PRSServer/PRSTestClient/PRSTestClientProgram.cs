@@ -15,6 +15,8 @@ using System.Net;
 using System.Net.Sockets;
 using PRSLib;
 
+using System.Text.RegularExpressions;
+
 namespace PRSTestClient
 {
     class PRSTestClientProgram
@@ -25,16 +27,48 @@ namespace PRSTestClient
             Console.WriteLine("\t-prs <serverIP>:<serverPort>");
         }
 
+        static void PrintChoices(int prs_port, int server_port, int ending_port, int timeout)
+        {
+            Console.WriteLine("PRS PORT: " + prs_port + ", " + "SERVER PORT: " + server_port + ", " + "ENDING PORT: " + ending_port + ", " + "TIMEOUT: " + timeout + "\n\n");
+   
+        }
+      
+
         static void Main(string[] args)
         {
-            // TODO: PRSTestClientProgram.Main()
-
+           
             // defaults
             string SERVER_IP = "127.0.0.1";
+            int PRS_PORT = 40000;
             int SERVER_PORT = 30000;
+            int ENDING_PORT = 40099;
+            int TIMEOUT = 10;
 
-            // process command options
-            //TODO BRENNEN ///////////////////////////////////////////////////////////////////////////////
+
+            //process command options
+            for (int i = 0; i < args.Length; ++i)
+            {
+                if (args[i] == "-p")
+                {
+                    PRS_PORT = Int32.Parse(args[i + 1]);
+                }
+
+                if (args[i] == "-s")
+                {
+                    SERVER_PORT = Int32.Parse(args[i + 1]);
+                }
+
+                if (args[i] == "-e")
+                {
+                    ENDING_PORT = Int32.Parse(args[i + 1]);
+                }
+
+                if (args[i] == "-t")
+                {
+                    TIMEOUT = Int32.Parse(args[i + 1]);
+                }
+            }
+
 
             // tell user what we're doing
             Console.WriteLine("Test Client started...");
@@ -44,12 +78,10 @@ namespace PRSTestClient
             // recommend proper PRSServer command line arguments
             Console.WriteLine();
             Console.WriteLine("Assumes the PRSServer is running with the following command line arguments:");
-            Console.WriteLine("    PRSServer.exe -p 30000 -s 40000 -e 40100 -t 10");
-            Console.WriteLine();
+            PrintChoices(PRS_PORT, SERVER_PORT, ENDING_PORT, TIMEOUT);
 
             // create the socket for sending messages to the server
             Socket clientSocket = new Socket(SocketType.Dgram, ProtocolType.Udp);
-
 
             // construct the server's address and port
             IPEndPoint serverEP = new IPEndPoint(IPAddress.Parse(SERVER_IP), SERVER_PORT);
@@ -61,8 +93,10 @@ namespace PRSTestClient
             try
             {
                 // call each test case method
-                TestCase1(clientSocket, serverEP);
-               
+                TestCase1(clientSocket, serverEP); //PASSED
+                TestCase2(clientSocket, serverEP);
+
+
             }
             catch (Exception ex)
             {
@@ -135,7 +169,30 @@ namespace PRSTestClient
 
             Console.WriteLine("TestCase 2 Started...");
 
-            // See test cases doc
+            // {REQUEST_PORT, “SVC1”, 0, 0} send message
+            PRSMessage msg = new PRSMessage(PRSMessage.MESSAGE_TYPE.REQUEST_PORT, "SVC1", 0, 0);
+            SendMessage(clientSocket, endPt, msg);
+
+            // {RESPONSE, “SVC1”, 40000, SUCCESS} recieve message
+            ExpectMessage(clientSocket, "{RESPONSE, SVC1, 40000, SUCCESS}");
+
+            //////////////////////////// new
+
+            // {LOOKUP_PORT, “SVC1”, 0, 0} send message
+            msg = new PRSMessage(PRSMessage.MESSAGE_TYPE.LOOKUP_PORT, "SVC1", 0, 0);
+            SendMessage(clientSocket, endPt, msg);
+
+            // {RESPONSE, “SVC1”, 40000, SUCCESS} recieve message
+            ExpectMessage(clientSocket, "{RESPONSE, SVC1, 40000, SUCCESS}");
+
+            //////////////////////////// new
+
+            // {CLOSE_PORT, “SVC1”, 40000, 0} send message
+            msg = new PRSMessage(PRSMessage.MESSAGE_TYPE.CLOSE_PORT, "SVC1", 40000, 0);
+            SendMessage(clientSocket, endPt, msg);
+
+            // {RESPONSE, “SVC1”, 40000, SUCCESS} recieve message
+            ExpectMessage(clientSocket, "{RESPONSE, SVC1, 40000, SUCCESS}");
 
             Console.WriteLine("TestCase 2 Passed!");
             Console.WriteLine();
