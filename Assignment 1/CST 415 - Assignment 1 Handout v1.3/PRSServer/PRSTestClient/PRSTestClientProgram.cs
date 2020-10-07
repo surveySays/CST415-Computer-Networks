@@ -34,7 +34,24 @@ namespace PRSTestClient
             // defaults
             string SERVER_IP = "127.0.0.1";
             int SERVER_PORT = 30000;
-    
+
+            try
+            {
+                if (args.Length > 0 && args[0] == "-prs")
+                {
+                    string[] newStrings = args[1].Split(':');
+
+                    SERVER_IP = newStrings[0];
+                    SERVER_PORT = Int32.Parse(newStrings[1]);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception: " + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+
+
             // tell user what we're doing
             Console.WriteLine("Test Client started...");
             Console.WriteLine("  ServerIP = " + SERVER_IP.ToString());

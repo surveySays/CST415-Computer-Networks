@@ -261,28 +261,31 @@ namespace PRSServer
 
             try
             {
-                // -p < service port >
-                // -s < starting client port number >
-                // -e < ending client port number >
-                // -t < keep alive time in seconds >
-
-                // TODO: check for valid STARTING_CLIENT_PORT and ENDING_CLIENT_PORT
-
+               
                 for (int i = 0; i < args.Length; i++)
                 {
                     if (args[i] == "-p")
+                    {
                         SERVER_PORT = ushort.Parse(args[i + 1]);
+                    }
                     if (args[i] == "-s")
+                    {
                         SERVER_PORT = ushort.Parse(args[i + 1]);
+                    }
                     if (args[i] == "-e")
+                    {
                         ENDING_CLIENT_PORT = ushort.Parse(args[i + 1]);
+                    }
                     if (args[i] == "-t")
+                    {
                         KEEP_ALIVE_TIMEOUT = int.Parse(args[i + 1]);
+                    }
                 }
             }
-            catch
+            catch (Exception ex)
             {
-
+                Console.WriteLine("Exception: " + ex.Message);
+                Console.WriteLine(ex.StackTrace);
             }
 
             // initialize the PRS server
