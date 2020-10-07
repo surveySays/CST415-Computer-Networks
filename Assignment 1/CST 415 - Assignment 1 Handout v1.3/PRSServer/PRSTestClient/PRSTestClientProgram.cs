@@ -35,26 +35,6 @@ namespace PRSTestClient
             string SERVER_IP = "127.0.0.1";
             int SERVER_PORT = 30000;
     
-
-            //process command options
-            //try
-            //{
-            //    for (int i = 0; i < args.Length; ++i)
-            //    {
-            //        if (args[i] == "-prs")
-            //        {
-            //            SERVER_IP = (args[i + 1]);
-            //            SERVER_PORT = Int32.Parse(args[i + 1]);
-            //        }
-            //    }
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine(ex.Message);
-            //}
-            
-       
             // tell user what we're doing
             Console.WriteLine("Test Client started...");
             Console.WriteLine("  ServerIP = " + SERVER_IP.ToString());
@@ -77,6 +57,9 @@ namespace PRSTestClient
                 TestCase1(clientSocket, serverEP); //PASSED
                 TestCase2(clientSocket, serverEP); //PASSED
                 TestCase3(clientSocket, serverEP); //PASSED
+                TestCase4(clientSocket, serverEP); //PASSED
+                TestCase5(clientSocket, serverEP); //PASSED
+                TestCase6(clientSocket, serverEP); //PASSED
 
             }
             catch (Exception ex)
@@ -247,14 +230,44 @@ namespace PRSTestClient
 
         private static void TestCase5(Socket clientSocket, IPEndPoint endPt)
         {
-            // TODO: PRSTestClientProgram.TestCase5()
-
+            
             // Simulates two PRS clients, SVC1 and SVC2, where SVC1 requests a port, SVC1 keeps the port alive, then SVC2 requests a port and receives its own port.
 
             Console.WriteLine("TestCase 5 Started...");
 
-            // See test cases doc
+            // send {REQUEST_PORT, “SVC1”, 0, 0}
+            PRSMessage msg = new PRSMessage(PRSMessage.MESSAGE_TYPE.REQUEST_PORT, "SVC1", 0, 0);
+            SendMessage(clientSocket, endPt, msg);
+
+            // expect {RESPONSE, “SVC1”, 40000, SUCCESS}
+            ExpectMessage(clientSocket, "{RESPONSE, SVC1, 40000, SUCCESS}");
+
             // use Thread.Sleep();
+            Console.WriteLine("Sleeping for 8 sec, please be patient...");
+            Thread.Sleep(8000);
+
+            // send {KEEP_ALIVE, “SVC1”, 40000, 0}
+            msg = new PRSMessage(PRSMessage.MESSAGE_TYPE.KEEP_ALIVE, "SVC1", 40000, 0);
+            SendMessage(clientSocket, endPt, msg);
+
+            // expect {RESPONSE, “SVC1”, 40000, SUCCESS}
+            ExpectMessage(clientSocket, "{RESPONSE, SVC1, 40000, SUCCESS}");
+
+            // use Thread.Sleep();
+            Console.WriteLine("Sleeping for 8 sec, please be patient...");
+            Thread.Sleep(8000);
+
+            // send {REQUEST_PORT, “SVC2”, 0, 0}
+            SendMessage(clientSocket, endPt, new PRSMessage(PRSMessage.MESSAGE_TYPE.REQUEST_PORT, "SVC2", 0, 0));
+
+            // expect {RESPONSE, “SVC2”, 40000, SUCCESS}
+            ExpectMessage(clientSocket, "{RESPONSE, SVC2, 40001, SUCCESS}");
+
+            // send {CLOSE_PORT, “SVC2”, 40000, 0}
+            SendMessage(clientSocket, endPt, new PRSMessage(PRSMessage.MESSAGE_TYPE.CLOSE_PORT, "SVC2", 40001, 0));
+
+            // expect {RESPONSE, “SVC2”, 40000, SUCCESS}
+            ExpectMessage(clientSocket, "{RESPONSE, SVC2, 40001, SUCCESS}");
 
             Console.WriteLine("TestCase 5 Passed!");
             Console.WriteLine();
@@ -262,13 +275,16 @@ namespace PRSTestClient
 
         private static void TestCase6(Socket clientSocket, IPEndPoint endPt)
         {
-            // TODO: PRSTestClientProgram.TestCase6()
-
+            
             // Simulates a PRS client, M, that tells the PRS to stop
-
             Console.WriteLine("TestCase 6 Started...");
 
-            // See test cases doc
+            // send {STOP, “”, 0, 0}
+            PRSMessage msg = new PRSMessage(PRSMessage.MESSAGE_TYPE.STOP, "", 0, 0);
+            SendMessage(clientSocket, endPt, msg);
+
+            // expect {RESPONSE, “”, 0, SUCCESS}
+            ExpectMessage(clientSocket, "{RESPONSE, , 0, SUCCESS}");
 
             Console.WriteLine("TestCase 6 Passed!");
             Console.WriteLine();
