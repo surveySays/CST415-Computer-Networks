@@ -1,6 +1,6 @@
 ﻿// PRSServerProgram.cs
 //
-// Juan Canseco
+// Brennen Boese
 // CST 415
 // Fall 2020
 // 

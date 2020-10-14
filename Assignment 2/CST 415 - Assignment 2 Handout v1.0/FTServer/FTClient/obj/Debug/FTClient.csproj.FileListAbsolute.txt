@@ -1,0 +1,9 @@
+C:\Users\abboe\Desktop\CST415-Computer-Networks\Assignment 2\CST 415 - Assignment 2 Handout v1.0\FTServer\FTClient\bin\Debug\FTClient.exe.config
+C:\Users\abboe\Desktop\CST415-Computer-Networks\Assignment 2\CST 415 - Assignment 2 Handout v1.0\FTServer\FTClient\bin\Debug\FTClient.exe
+C:\Users\abboe\Desktop\CST415-Computer-Networks\Assignment 2\CST 415 - Assignment 2 Handout v1.0\FTServer\FTClient\bin\Debug\FTClient.pdb
+C:\Users\abboe\Desktop\CST415-Computer-Networks\Assignment 2\CST 415 - Assignment 2 Handout v1.0\FTServer\FTClient\bin\Debug\PRSLib.dll
+C:\Users\abboe\Desktop\CST415-Computer-Networks\Assignment 2\CST 415 - Assignment 2 Handout v1.0\FTServer\FTClient\bin\Debug\PRSLib.pdb
+C:\Users\abboe\Desktop\CST415-Computer-Networks\Assignment 2\CST 415 - Assignment 2 Handout v1.0\FTServer\FTClient\obj\Debug\FTClient.csprojAssemblyReference.cache
+C:\Users\abboe\Desktop\CST415-Computer-Networks\Assignment 2\CST 415 - Assignment 2 Handout v1.0\FTServer\FTClient\obj\Debug\FTClient.csproj.CopyComplete
+C:\Users\abboe\Desktop\CST415-Computer-Networks\Assignment 2\CST 415 - Assignment 2 Handout v1.0\FTServer\FTClient\obj\Debug\FTClient.exe
+C:\Users\abboe\Desktop\CST415-Computer-Networks\Assignment 2\CST 415 - Assignment 2 Handout v1.0\FTServer\FTClient\obj\Debug\FTClient.pdb
