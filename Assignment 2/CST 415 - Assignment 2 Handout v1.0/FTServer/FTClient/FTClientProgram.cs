@@ -1,8 +1,8 @@
 ﻿// FTClientProgram.cs
 //
-// Pete Myers
+// Brennen Boese
 // CST 415
-// Fall 2019
+// Fall 2020
 // 
 
 using System;
@@ -44,12 +44,16 @@ namespace FTClient
                         DIRECTORY_NAME = args[++i];
                     }
                 }
+
+                if (DIRECTORY_NAME == null)
+                {
+                    throw new Exception("Missing required directory name!");
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error: " + ex.Message);
-                Usage();
-                return;
+                Console.WriteLine(ex.StackTrace);
             }
 
 
@@ -60,8 +64,7 @@ namespace FTClient
             Console.WriteLine("FT Server Address: " + FTSERVER_IPADDRESS);
             Console.WriteLine("Directory: " + DIRECTORY_NAME);
 
-            //for now, hard code directory name
-            DIRECTORY_NAME = "foo";
+        
             
             try
             {

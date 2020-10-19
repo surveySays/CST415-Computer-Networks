@@ -1,8 +1,8 @@
 ﻿// FTServer.cs
 //
-// Pete Myers
+// Brennen Boese
 // CST 415
-// Fall 2019
+// Fall 2020
 // 
 
 using System;

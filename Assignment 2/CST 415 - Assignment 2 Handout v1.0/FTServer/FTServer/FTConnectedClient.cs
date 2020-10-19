@@ -1,8 +1,8 @@
 ﻿// FTConnectedClient.cs
 //
-// Pete Myers
+// Brennen Boese
 // CST 415
-// Fall 2019
+// Fall 2020
 // 
 
 using System;
@@ -85,20 +85,38 @@ namespace FTServer
                         string directoryName = reader.ReadLine();
                         Console.WriteLine("FTConnectedClient.Run() - recieved get msg for " + directoryName);
 
-                        // TODO: retrieve directory contents and sending all the files
+                        // retrieve directory contents and sending all the files
 
                         // if directory does not exist! send an error!
+                        if (!Directory.Exists(directoryName))
+                        {
+                            SendError("Directory does not exist :" + directoryName);
+                        }
+                        else
+                        {
+                            // directory exists, so send each file to the client
+                            // for each file...
+                            foreach (string fName in Directory.GetFiles(directoryName))
+                            {
+                                // make sure it's a txt file
+                                FileInfo fi = new FileInfo(fName);
+                                if (fi.Extension == ".txt")
+                                {
+                                    // send file name and length
+                                    SendFileName(fi.Name, (int)fi.Length);
 
-                        // if directory exists, send each file to the client
-                        // for each file...
-                        // get the file's name
-                        // make sure it's a txt file
-                        // get the file contents
-                        // send a file to the client
+                                    // get the file contents
+                                    string contents = File.ReadAllText(fName);
 
-                        // send done after last file
-                        SendDone();
-                                
+                                    // send a file to the client
+                                    SendFileContents(contents);
+                                }
+                            }
+
+                            // send done after last file
+                            SendDone();
+                        }
+
                     }
 
                     else if (msg == "exit")
@@ -137,16 +155,20 @@ namespace FTServer
 
         private void SendFileName(string fileName, int fileLength)
         {
-            // TODO: FTConnectedClient.SendFileName()
+            // FTConnectedClient.SendFileName()
             // send file name and file length message
+            writer.Write(fileName + "\n" + fileLength.ToString() + "\n");
+            writer.Flush();
 
         }
 
         private void SendFileContents(string fileContents)
         {
-            // TODO: FTConnectedClient.SendFileContents()
+            // FTConnectedClient.SendFileContents()
             // send file contents only
             // NOTE: no \n at end of contents
+            writer.Write(fileContents);
+            writer.Flush();
 
         }
 

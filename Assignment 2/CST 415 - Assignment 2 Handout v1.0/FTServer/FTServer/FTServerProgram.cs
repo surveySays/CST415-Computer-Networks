@@ -1,8 +1,8 @@
 ﻿// FTServerProgram.cs
 //
-// Pete Myers
+// Brennen Boese
 // CST 415
-// Fall 2019
+// Fall 2020
 // 
 
 using System;
@@ -20,7 +20,7 @@ namespace FTServer
 
         static void Main(string[] args)
         {
-            // TODO: FTServerProgram.Main()
+            // FTServerProgram.Main()
 
             // defaults
             ushort FTSERVER_PORT = 40000;

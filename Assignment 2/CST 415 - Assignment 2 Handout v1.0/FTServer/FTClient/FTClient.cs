@@ -2,7 +2,7 @@
 //
 // Brennen Boese
 // CST 415
-// Fall 2019
+// Fall 2020
 // 
 
 using System;
@@ -156,24 +156,31 @@ namespace FTClient
             }
 
             // received a file name
-
             // receive file length from server
+            int fileLength = int.Parse(reader.ReadLine());
 
             // receive file contents
+            int charsToRead = fileLength;
+            StringBuilder fileContents = new StringBuilder();
 
             // loop until all of the file contenst are received
-            //while (charsToRead > 0)
+            while (charsToRead > 0)
             {
                 // receive as many characters from the server as available
+                char[] buffer = new char[charsToRead];
+                int charsActuallyRead = reader.Read(buffer, 0, charsToRead);
 
                 // accumulate bytes read into the contents
-
+                charsToRead -= charsActuallyRead;
+                fileContents.Append(buffer);
             }
 
             // create the local directory if needed
-            
+            Directory.CreateDirectory(directoryName);
+
             // save the file locally on the disk
-            
+            File.WriteAllText(Path.Combine(directoryName, fileName), fileContents.ToString());
+
             return true;
         }
 

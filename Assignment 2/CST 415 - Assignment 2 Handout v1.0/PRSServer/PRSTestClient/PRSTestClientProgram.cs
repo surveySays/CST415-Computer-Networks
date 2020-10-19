@@ -2,7 +2,7 @@
 //
 // Brennen Boese
 // CST 415
-// Fall 2019
+// Fall 2020
 //
 // Connects to a PRSServer and runs TC1 through TC6
 // Assumes the PRSServer is run with the following command line arguments:
