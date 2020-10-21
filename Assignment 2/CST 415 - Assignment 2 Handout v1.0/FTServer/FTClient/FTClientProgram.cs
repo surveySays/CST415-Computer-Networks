@@ -42,6 +42,8 @@ namespace FTClient
                     if (args[i] == "-d")
                     {
                         DIRECTORY_NAME = args[++i];
+
+                        Console.WriteLine(DIRECTORY_NAME); 
                     }
                 }
 
