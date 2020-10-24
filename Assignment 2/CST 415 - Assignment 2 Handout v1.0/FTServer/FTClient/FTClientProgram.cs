@@ -42,8 +42,17 @@ namespace FTClient
                     if (args[i] == "-d")
                     {
                         DIRECTORY_NAME = args[++i];
+                    }
+                    if (args[i] == "-prs")
+                    {
+                        string[] IP_PORT = args[1].Split(':');
 
-                        Console.WriteLine(DIRECTORY_NAME); 
+                        PRSSERVER_IPADDRESS = IP_PORT[0];
+                        PSRSERVER_PORT = ushort.Parse(IP_PORT[1]);
+                    }
+                    if (args[i] == "-s")
+                    {
+                        FTSERVER_IPADDRESS = args[++i];
                     }
                 }
 
@@ -54,10 +63,9 @@ namespace FTClient
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error: " + ex.Message);
+                Console.WriteLine("Error " + ex.Message);
                 Console.WriteLine(ex.StackTrace);
             }
-
 
 
 
