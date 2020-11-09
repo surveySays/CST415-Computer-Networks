@@ -1,8 +1,8 @@
 ﻿// SDConnectedClient.cs
 //
-// Pete Myers
+// Brennen Boese
 // CST 415
-// Fall 2019
+// Fall 2020
 // 
 
 using System;
@@ -32,49 +32,54 @@ namespace SDServer
 
         public SDConnectedClient(Socket clientSocket, SessionTable sessionTable)
         {
-            // TODO: SDConnectedClient.SDConnectedClient()
 
             // save the client's socket
-            
+            this.clientSocket = clientSocket;
+
             // at this time, there is no stream, reader, write or thread
-            
+            stream = null;
+            reader = null;
+            writer = null;
+            clientThread = null;
+
             // save the server's session table
-            
+            this.sessionTable = sessionTable;
+
             // at this time, ther eis no session open
+            sessionId = 0;
             
         }
 
         public void Start()
         {
-            // TODO: SDConnectedClient.Start()
-
             // called by the main thread to start the clientThread and process messages for the client
 
             // create and start the clientThread, pass in a reference to this class instance as a parameter
-
+            clientThread = new Thread(ThreadProc);
+            clientThread.Start(this);
         }
 
         private static void ThreadProc(Object param)
         {
-            // TODO: SDConnectedClient.ThreadProc()
 
             // the procedure for the clientThread
             // when this method returns, the clientThread will exit
 
             // the param is a SDConnectedClient instance
             // start processing messages with the Run() method
-
+            (param as SDConnectedClient).Run();
         }
 
         private void Run()
         {
-            // TODO: SDConnectedClient.Run()
-
-            // this method is executed on the clientThread
+            //this method is executed on the clientThread
 
             try
             {
                 // create network stream, reader and writer over the socket
+                stream = new NetworkStream(clientSocket);
+                reader = new StreamReader(stream);
+                writer = new StreamWriter(stream);
                 
                 // process client requests
                 bool done = false;
@@ -86,20 +91,25 @@ namespace SDServer
                     {
                         // no message means the client disconnected
                         // remember that the client will connect and disconnect as desired
-                        
+                        Console.WriteLine("SDConnectedClient.Run() - client disconnected");
+                        done = true;
+
                     }
                     else
                     {
                         // handle the message
+                        Console.WriteLine("SDConnectedClient.Run() - read message: " + msg);
                         switch (msg)
                         {
                             case "open":
+                                HandleOpen();
                                 break;
 
                             case "resume":
                                 break;
 
                             case "close":
+                                HandleClose();
                                 break;
 
                             case "get":
@@ -130,13 +140,16 @@ namespace SDServer
             }
 
             // close the client's writer, reader, network stream and socket
+            writer.Close();
+            reader.Close();
+            stream.Close();
+            clientSocket.Disconnect(false);
+            clientSocket.Close();
             
         }
 
         private void HandleOpen()
         {
-            // TODO: SDConnectedClient.HandleOpen()
-
             // handle an "open" request from the client
 
             // if no session currently open, then...
@@ -145,9 +158,12 @@ namespace SDServer
                 try
                 {
                     // ask the SessionTable to open a new session and save the session ID
-                    
+                    sessionId = sessionTable.OpenSession();
+                    Console.WriteLine("SDConnctedClient.HandleOpen() - opened sessions on session table: "+ sessionId.ToString());
+
                     // send accepted message, with the new session's ID, to the client
-                    
+                    SendAccepted(sessionId);
+
                 }
                 catch (SessionException se)
                 {
@@ -202,17 +218,30 @@ namespace SDServer
 
         private void HandleClose()
         {
-            // TODO: SDConnectedClient.HandleClose()
-
             // handle a "close" request from the client
 
             // get the sessionId that the client just asked us to close
+            string line = reader.ReadLine();
+            ulong closeThis = ulong.Parse(line);
+
             
             try
             {
+                // the client currently has a session open,
+                // make sure client has requested to close their own sessionId
+                if (sessionId != 0 && closeThis != sessionId)
+                {
+                    throw new SessionException("Hey! You're closing the wrong session Id!");
+                }
+
                 // close the session in the session table
+                sessionTable.CloseSession(closeThis);
+
                 // send closed message back to client
+                SendClosed(closeThis);
+
                 // record that this client no longer has an open session
+                sessionId = 0;
 
             }
             catch (SessionException se)
@@ -295,10 +324,12 @@ namespace SDServer
 
         private void SendAccepted(ulong sessionId)
         {
-            // TODO: SDConnectedClient.SendAccepted()
-
             // send accepted message to SD client, including session id of now open session
-            
+            writer.Write("accepted\n" + sessionId.ToString() + "\n");
+            writer.Flush();
+            Console.WriteLine("SDConnctedClient.SendAccepted() - sent accepted to client: " + sessionId.ToString());
+
+
         }
 
         private void SendRejected(string reason)
@@ -311,10 +342,12 @@ namespace SDServer
 
         private void SendClosed(ulong sessionId)
         {
-            // TODO: SDConnectedClient.SendClosed()
 
             // send closed message to SD client, including session id that was just closed
-            
+            writer.Write("closed\n" + sessionId.ToString() + "\n");
+            writer.Flush();
+            Console.WriteLine("SDConnctedClient.SendClosed() - sent closed to client: " + sessionId.ToString());
+
         }
 
         private void SendSuccess()
@@ -337,10 +370,12 @@ namespace SDServer
 
         private void SendError(string errorString)
         {
-            // TODO: SDConnectedClient.SendError()
-
             // send error message to SD client, including error string
-            
+            writer.Write("error\n" + errorString + "\n");
+            writer.Flush();
+            Console.WriteLine("SDConnctedClient.SendError() - sent error to client: " + errorString);
+
+
         }
 
         private string ReceiveDocument(int length)

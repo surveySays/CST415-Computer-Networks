@@ -1,8 +1,8 @@
 ﻿// SDClient.cs
 //
-// Pete Myers
+// Brennen Boese
 // CST 415
-// Fall 2019
+// Fall 2020
 // 
 
 using System;
@@ -26,55 +26,68 @@ namespace SDClient
 
         public SDClient(string sdServerAddress, ushort sdServerPort)
         {
-            // TODO: SDClient.SDClient()
-
             // save server address/port
-            
+            this.sdServerAddress = sdServerAddress;
+            this.sdServerPort = sdServerPort;
+
             // initialize to not connected to server
-            
+            connected = false;
+            clientSocket = null;
+            stream = null;
+            reader = null;
+            writer = null;
+
             // no session open at this time
-            
+            sessionID = 0;
         }
 
         public ulong SessionID { get { return sessionID; } set { sessionID = value; } }
 
         public void Connect()
         {
-            // TODO: SDClient.Connect()
-
             ValidateDisconnected();
 
             // create a client socket and connect to the FT Server's IP address and port
-            
+            clientSocket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+            clientSocket.Connect(new IPEndPoint(IPAddress.Parse(sdServerAddress), sdServerPort));
+
             // establish the network stream, reader and writer
-            
+            stream = new NetworkStream(clientSocket);
+            reader = new StreamReader(stream);
+            writer = new StreamWriter(stream);
+
             // now connected
+            connected = true;
             
         }
 
         public void Disconnect()
         {
-            // TODO: SDClient.Disconnect()
-
             ValidateConnected();
 
             // close writer, reader and stream
-            
+            writer.Close();
+            reader.Close();
+            stream.Close();
+
             // disconnect and close socket
-            
+            clientSocket.Disconnect(false);
+            clientSocket.Close();
+
             // now disconnected
+            connected = false;
             
         }
 
         public void OpenSession()
         {
-            // TODO: SDClient.OpenSession()
-
             ValidateConnected();
 
             // send open command to server
-            
+            SendOpen();
+
             // receive server's response, hopefully with a new session id
+            sessionID = ReceiveSessionResponse();
             
         }
 
@@ -96,13 +109,21 @@ namespace SDClient
 
         public void CloseSession()
         {
-            // TODO: SDClient.CloseSession()
-
             ValidateConnected();
 
             // send close session to the server
-            
+            SendClose(sessionID);
+
+            //verify closed response
+            ulong closedId = ReceiveSessionResponse();
+
+            if (closedId != sessionID)
+            {
+                throw new Exception("Server closed id " + closedId.ToString() + " but we asked to close " + sessionID.ToString());
+            }
+
             // no session open
+            sessionID = 0;
             
         }
 
@@ -144,18 +165,20 @@ namespace SDClient
 
         private void SendOpen()
         {
-            // TODO: SDClient.SendOpen()
-
             // send open message to SD server
+            writer.Write("open\n");
+            writer.Flush();
+            Console.WriteLine("Sent open to server");
             
         }
 
         private void SendClose(ulong sessionId)
         {
-            // TODO: SDClient.SendClose()
-
             // send close message to SD server
-            
+            writer.Write("close\n" + sessionID.ToString() + "\n");
+            writer.Flush();
+            Console.WriteLine("Sent close to server: " + sessionID.ToString());
+
         }
 
         private void SendResume(ulong sessionId)
@@ -168,25 +191,37 @@ namespace SDClient
 
         private ulong ReceiveSessionResponse()
         {
-            // TODO: SDClient.ReceiveSessionResponse()
-
             // get SD server's response to our last session request (open or resume)
             string line = reader.ReadLine();
             if (line == "accepted")
             {
                 // yay, server accepted our session!
                 // get the sessionID
-                return 0;
+                line = reader.ReadLine();
+                Console.WriteLine("Received accepted: " + line);
+                return ulong.Parse(line);
+              
             }
             else if (line == "rejected")
             {
                 // boo, server rejected us!
-                throw new Exception("TODO");
+                line = reader.ReadLine();
+                Console.WriteLine("Received rejected: " + line);
+                throw new Exception(line);
+            }
+            else if (line == "closed")
+            {
+                // yay, server closed the session
+                line = reader.ReadLine();
+                Console.WriteLine("Received closed: " + line);
+                return ulong.Parse(line);
             }
             else if (line == "error")
             {
                 // boo, server sent us an error!
-                throw new Exception("TODO");
+                line = reader.ReadLine();
+                Console.WriteLine("Received error: " + line);
+                throw new Exception(line);
             }
             else
             {

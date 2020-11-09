@@ -39,7 +39,19 @@ namespace SDClient
             string DOCUMENT_CMD = null;
             string DOCUMENT_NAME = null;
 
-            // process the command line arguments
+            //TODO: process the command line arguments
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] == "-o")
+                {
+                    SESSION_CMD = "-o";
+                }
+                else if (args[i] == "-c")
+                {
+                    SESSION_CMD = "-c";
+                    SESSION_ID = ulong.Parse(args[++i]);
+                }
+            }
             
 
             Console.WriteLine("PRS Address: " + PRSSERVER_IPADDRESS);
@@ -53,14 +65,18 @@ namespace SDClient
             try
             {
                 // contact the PRS and lookup port for "SD Server"
-                
+                PRSClient prs = new PRSClient(PRSSERVER_IPADDRESS, PSRSERVER_PORT, SDSERVICE_NAME);
+                SDSERVER_PORT = prs.LookupPort();
+
                 // create an SDClient to use in talking to the server
-                
+                SDClient sd = new SDClient(SDSERVER_IPADDRESS, SDSERVER_PORT);
+                sd.Connect();
+
                 // send session command to server
                 if (SESSION_CMD == "-o")
                 {
                     // open new session
-                    
+                    sd.OpenSession();
                 }
                 else if (SESSION_CMD == "-r")
                 {
@@ -70,7 +86,8 @@ namespace SDClient
                 else if (SESSION_CMD == "-c")
                 {
                     // close existing session
-                    
+                    sd.SessionID = SESSION_ID;
+                    sd.CloseSession();
                 }
                 
                 // send document request to server
@@ -88,8 +105,9 @@ namespace SDClient
                     // print out the received document
                     
                 }
-                
+
                 // disconnect from the server
+                sd.Disconnect();
                 
             }
             catch (Exception ex)

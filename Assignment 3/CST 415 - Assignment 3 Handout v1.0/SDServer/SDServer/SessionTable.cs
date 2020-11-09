@@ -1,8 +1,8 @@
 ﻿// SessionTable.cs
 //
-// Pete Myers
+// Brennen Boese
 // CST 415
-// Fall 2019
+// Fall 2020
 // 
 
 using System;
@@ -64,15 +64,20 @@ namespace SDServer
 
         public ulong OpenSession()
         {
-            // TODO: SessionTable.OpenSession()
-
             // allocate and return a new session to the caller
             // find a free sessionId
-            // allocate a new session instance
-            // save the session for later
-            
+            ulong sessionId = NextSessionId();
 
-            return 0;
+            // allocate a new session instance
+            Session session = new Session(sessionId);
+
+            // save the session for later
+            mutex.WaitOne();
+            sessions.Add(sessionId, session);
+            mutex.ReleaseMutex();
+
+
+            return sessionId;
         }
 
         public bool ResumeSession(ulong sessionID)
@@ -85,11 +90,20 @@ namespace SDServer
 
         public void CloseSession(ulong sessionID)
         {
-            // TODO: SessionTable.CloseSession()
-
             // closes the session, will no longer be open and cannot be reused
-            // throws a session exception if the session is not open
+            mutex.WaitOne();
 
+            // throws a session exception if the session is not open
+            if (!sessions.ContainsKey(sessionID))
+            {
+                mutex.ReleaseMutex();
+                throw new SessionException("Cannot close session that doesn't exist!");
+            }
+
+            //remove the session from the table
+            sessions.Remove(sessionID);
+
+            mutex.ReleaseMutex();
         }
 
         public string GetSessionValue(ulong sessionID, string key)
