@@ -39,7 +39,7 @@ namespace SDClient
             string DOCUMENT_CMD = null;
             string DOCUMENT_NAME = null;
 
-            //TODO: process the command line arguments
+            //process the command line arguments
             for (int i = 0; i < args.Length; i++)
             {
                 if (args[i] == "-o")
@@ -50,6 +50,16 @@ namespace SDClient
                 {
                     SESSION_CMD = "-c";
                     SESSION_ID = ulong.Parse(args[++i]);
+                }
+                else if (args[i] == "-r")
+                {
+                    SESSION_CMD = "-r";
+                    SESSION_ID = ulong.Parse(args[++i]);
+                }
+                else if (args[i] == "-post")
+                {
+                    DOCUMENT_CMD = "-post";
+                    DOCUMENT_NAME = args[++i];
                 }
             }
             
@@ -81,6 +91,7 @@ namespace SDClient
                 else if (SESSION_CMD == "-r")
                 {
                     // resume existing session
+                    sd.ResumeSession(SESSION_ID);
                     
                 }
                 else if (SESSION_CMD == "-c")
@@ -94,9 +105,10 @@ namespace SDClient
                 if (DOCUMENT_CMD == "-post")
                 {
                     // read the document contents from stdin
-                    
+                    string documentContents = Console.In.ReadToEnd();
+
                     // send the document to the server
-                    
+                    sd.PostDocument(DOCUMENT_NAME, documentContents);
                 }
                 else if (DOCUMENT_CMD == "-get")
                 {

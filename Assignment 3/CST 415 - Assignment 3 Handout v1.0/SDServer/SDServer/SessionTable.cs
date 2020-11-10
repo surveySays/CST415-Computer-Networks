@@ -82,10 +82,15 @@ namespace SDServer
 
         public bool ResumeSession(ulong sessionID)
         {
-            // TODO: SessionTable.ResumeSession()
-
             // returns true only if sessionID is a valid and open sesssion, false otherwise
-            return false;
+            bool result = false;
+
+            mutex.WaitOne();
+            if (sessions.ContainsKey(sessionID))
+                result = true;
+            mutex.ReleaseMutex();
+
+            return result;
         }
 
         public void CloseSession(ulong sessionID)
@@ -117,11 +122,21 @@ namespace SDServer
 
         public void PutSessionValue(ulong sessionID, string key, string value)
         {
-            // TODO: SessionTable.PutSessionValue()
-
             // stores a session value by session ID and key, replaces value if it already exists
+            mutex.WaitOne();
+
             // throws a session exception if the session is not open
-            
+            if (!sessions.ContainsKey(sessionID))
+            {
+                mutex.ReleaseMutex();
+                throw new SessionException("Cannot put value for session that doesn't exist!");
+            }
+
+            //store the value in the session
+            sessions[sessionID].values[key] = value;
+
+            mutex.ReleaseMutex();
+
         }
     }
 }

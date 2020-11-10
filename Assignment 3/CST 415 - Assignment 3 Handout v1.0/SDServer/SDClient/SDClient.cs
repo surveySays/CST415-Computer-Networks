@@ -93,18 +93,22 @@ namespace SDClient
 
         public void ResumeSession(ulong trySessionID)
         {
-            // TODO: SDClient.ResumeSession()
-
             ValidateConnected();
 
             // send resume session to the server
-            
+            SendResume(trySessionID);
+
             // receive server's response, hopefully confirming our sessionId
+           ulong receivedSessionId = ReceiveSessionResponse();
             
             // verify that we received the same session ID that we requested
-            
+            if (trySessionID != receivedSessionId)
+            {
+                throw new Exception("Server resumed wrong session id!: " + receivedSessionId.ToString());
+            }
+
             // save opened session
-            
+            sessionID = receivedSessionId;
         }
 
         public void CloseSession()
@@ -141,11 +145,10 @@ namespace SDClient
 
         public void PostDocument(string documentName, string documentContents)
         {
-            // TODO: SDClient.PostDocument()
-
             ValidateConnected();
 
             // send the document to the server
+            SendPost(documentName, documentContents);
             
             // get the server's response
             
@@ -168,14 +171,13 @@ namespace SDClient
             // send open message to SD server
             writer.Write("open\n");
             writer.Flush();
-            Console.WriteLine("Sent open to server");
-            
+            Console.WriteLine("Sent open to server");     
         }
 
         private void SendClose(ulong sessionId)
         {
             // send close message to SD server
-            writer.Write("close\n" + sessionID.ToString() + "\n");
+            writer.Write("close\n" + sessionId.ToString() + "\n");
             writer.Flush();
             Console.WriteLine("Sent close to server: " + sessionID.ToString());
 
@@ -183,10 +185,11 @@ namespace SDClient
 
         private void SendResume(ulong sessionId)
         {
-            // TODO: SDClient.SendResume()
-
             // send resume message to SD server
-            
+            writer.Write("resume\n" + sessionId.ToString() + "\n");
+            writer.Flush();
+            Console.WriteLine("Sent resume to server: " + sessionID.ToString());
+
         }
 
         private ulong ReceiveSessionResponse()
@@ -231,9 +234,11 @@ namespace SDClient
 
         private void SendPost(string documentName, string documentContents)
         {
-            // TODO: SDClient.SendPost()
-
             // send post message to SD erer, including document name, length and contents
+            writer.Write("post\n" + documentName + "\n" + documentContents.Length.ToString() + "\n");
+            writer.Write(documentContents);
+            writer.Flush();
+            Console.WriteLine("Sent post to server for document: " + documentName);
 
         }
 
@@ -247,19 +252,18 @@ namespace SDClient
 
         private void ReceivePostResponse()
         {
-            // TODO: SDClient.ReceivePostResponse()
-
             // get server's response to our last post request
             string line = reader.ReadLine();
             if (line == "success")
             {
                 // yay, server accepted our request!
-                
+                Console.WriteLine("Successfully posted document");
             }
             else if (line == "error")
             {
                 // boo, server sent us an error!
-                throw new Exception("TODO");
+                line = reader.ReadLine();
+                throw new Exception("Error posting document: " + line);
             }
             else
             {
