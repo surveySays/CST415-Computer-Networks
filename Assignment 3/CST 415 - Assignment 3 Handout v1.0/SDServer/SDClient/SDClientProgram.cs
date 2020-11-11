@@ -56,11 +56,12 @@ namespace SDClient
                     SESSION_CMD = "-r";
                     SESSION_ID = ulong.Parse(args[++i]);
                 }
-                else if (args[i] == "-post")
+                else if (args[i] == "-post" || args[i] == "-get")
                 {
-                    DOCUMENT_CMD = "-post";
+                    DOCUMENT_CMD = args[i];
                     DOCUMENT_NAME = args[++i];
                 }
+       
             }
             
 
@@ -113,8 +114,10 @@ namespace SDClient
                 else if (DOCUMENT_CMD == "-get")
                 {
                     // get document from the server
-                    
+                    string documentContents = sd.GetDocument(DOCUMENT_NAME);
+
                     // print out the received document
+                    Console.WriteLine("Received document content: " + documentContents);
                     
                 }
 

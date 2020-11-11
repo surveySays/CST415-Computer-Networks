@@ -273,21 +273,22 @@ namespace SDServer
 
         private void HandleGet()
         {
-            // TODO: SDConnectedClient.HandleGet()
-
             // handle a "get" request from the client
+
+            // get the document name from the client
+            string documentName = reader.ReadLine();
 
             // if the client has a session open
             if (sessionId != 0)
             {
                 try
                 {
-                    // get the document name from the client
                     
                     // get the document content from the session table
-                    
+                    string documentContent = sessionTable.GetSessionValue(sessionId, documentName);
+
                     // send success and document to the client
-                    
+                    SendSuccess(documentName, documentContent);
                 }
                 catch (SessionException se)
                 {
@@ -300,7 +301,8 @@ namespace SDServer
             }
             else
             {
-                // error, cannot post without a session
+                // error, cannot get without a session
+                SendError("Cannot get document without an open session!");
                 
             }
         }
@@ -381,11 +383,13 @@ namespace SDServer
 
         private void SendSuccess(string documentName, string documentContent)
         {
-            // TODO: SDConnectedClient.SendSuccess(documentName, documentContent)
-
             // send success message to SD client, including retrieved document name, length and content
             // NOTE: in response to a get request
-            
+            writer.Write("success\n" + documentName + "\n" + documentContent.Length.ToString() + "\n");
+            writer.Write(documentContent);
+            writer.Flush();
+            Console.WriteLine("SDConnctedClient.SendSuccess() - sent success to client for " + documentName);
+
         }
 
         private void SendError(string errorString)
