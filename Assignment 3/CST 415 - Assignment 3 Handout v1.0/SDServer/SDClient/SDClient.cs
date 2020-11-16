@@ -148,9 +148,9 @@ namespace SDClient
 
             // send the document to the server
             SendPost(documentName, documentContents);
-            
+
             // get the server's response
-            
+            ReceivePostResponse();
         }
 
         private void ValidateConnected()
@@ -178,7 +178,7 @@ namespace SDClient
             // send close message to SD server
             writer.Write("close\n" + sessionId.ToString() + "\n");
             writer.Flush();
-            Console.WriteLine("Sent close to server: " + sessionID.ToString());
+            Console.WriteLine("Sent close to server: " + sessionId.ToString());
 
         }
 
@@ -187,7 +187,7 @@ namespace SDClient
             // send resume message to SD server
             writer.Write("resume\n" + sessionId.ToString() + "\n");
             writer.Flush();
-            Console.WriteLine("Sent resume to server: " + sessionID.ToString());
+            Console.WriteLine("Sent resume to server: " + sessionId.ToString());
 
         }
 
