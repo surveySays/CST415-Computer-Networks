@@ -1,8 +1,8 @@
 ﻿// PRSClient.cs
 //
-// Pete Myers
+// Brennen Boese
 // CST 415
-// Fall 2019
+// Fall 2020
 // 
 
 using System;
@@ -31,7 +31,7 @@ namespace PRSLib
 
             // create the socket for sending messages to the server
             clientSocket = new Socket(SocketType.Dgram, ProtocolType.Udp);
-            
+
             // construct the server's address and port
             endPt = new IPEndPoint(IPAddress.Parse(prsAddress), prsPort);
 
@@ -53,7 +53,7 @@ namespace PRSLib
                 portNumber = response.Port;
                 return response.Port;
             }
- 
+
             throw new Exception("Failed to request port for service " + serviceName + ", error " + response.Status.ToString());
         }
 
@@ -75,7 +75,7 @@ namespace PRSLib
                 // send the keep alive to the PRS for this client's port
                 prs.SendMessage(new PRSMessage(PRSMessage.MESSAGE_TYPE.KEEP_ALIVE, prs.serviceName, prs.portNumber, PRSMessage.STATUS.SUCCESS));
                 PRSMessage response = prs.ReceiveResponse();
-                
+
                 // if we receive a failure to keep this port alive, assume there's a serious failure and stop
                 if (response.Status != PRSMessage.STATUS.SUCCESS)
                 {
@@ -111,7 +111,7 @@ namespace PRSLib
 
             // send close port to server for our service name and port number
             SendMessage(new PRSMessage(PRSMessage.MESSAGE_TYPE.CLOSE_PORT, serviceName, portNumber, PRSMessage.STATUS.SUCCESS));
-            
+
             // expect success
             PRSMessage response = ReceiveResponse();
             if (response.Status != PRSMessage.STATUS.SUCCESS)

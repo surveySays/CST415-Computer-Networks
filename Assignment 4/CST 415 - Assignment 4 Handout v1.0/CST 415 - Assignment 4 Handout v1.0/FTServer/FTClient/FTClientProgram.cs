@@ -1,8 +1,8 @@
 ﻿// FTClientProgram.cs
 //
-// Pete Myers
+// Brennen Boese
 // CST 415
-// Fall 2019
+// Fall 2020
 // 
 
 using System;
@@ -35,20 +35,62 @@ namespace FTClient
             string DIRECTORY_NAME = null;
 
             // process the command line arguments
+            try
+            {
+                for (int i = 0; i < args.Length; i++)
+                {
+                    if (args[i] == "-d")
+                    {
+                        DIRECTORY_NAME = args[++i];
+                    }
+                    if (args[i] == "-prs")
+                    {
+                        string[] IP_PORT = args[1].Split(':');
+
+                        PRSSERVER_IPADDRESS = IP_PORT[0];
+                        PSRSERVER_PORT = ushort.Parse(IP_PORT[1]);
+                    }
+                    if (args[i] == "-s")
+                    {
+                        FTSERVER_IPADDRESS = args[++i];
+                    }
+                }
+
+                if (DIRECTORY_NAME == null)
+                {
+                    throw new Exception("Missing required directory name!");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error " + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+
+
+
             Console.WriteLine("PRS Address: " + PRSSERVER_IPADDRESS);
             Console.WriteLine("PRS Port: " + PSRSERVER_PORT);
             Console.WriteLine("FT Server Address: " + FTSERVER_IPADDRESS);
             Console.WriteLine("Directory: " + DIRECTORY_NAME);
+
+        
             
             try
             {
                 // contact the PRS and lookup port for "FT Server"
-                
+                PRSClient prs = new PRSClient(PRSSERVER_IPADDRESS, PSRSERVER_PORT, FTSERVICE_NAME);
+                FTSERVER_PORT = prs.LookupPort();
+
                 // create an FTClient and connect it to the server
-                
+                FTClient ft = new FTClient(FTSERVER_IPADDRESS, FTSERVER_PORT);
+                ft.Connect();
+
                 // get the contents of the specified directory
-                
+                ft.GetDirectory(DIRECTORY_NAME);
+
                 // disconnect from the server
+                ft.Disconnect();
                 
             }
             catch (Exception ex)

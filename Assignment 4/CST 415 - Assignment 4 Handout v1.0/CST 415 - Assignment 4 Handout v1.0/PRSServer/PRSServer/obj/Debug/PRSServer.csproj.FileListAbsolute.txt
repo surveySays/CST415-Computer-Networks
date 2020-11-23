@@ -1,0 +1,9 @@
+C:\Users\Boese\Documents\CST415\CST415-Computer-Networks\Assignment 4\CST 415 - Assignment 4 Handout v1.0\CST 415 - Assignment 4 Handout v1.0\PRSServer\PRSServer\bin\Debug\PRSServer.exe.config
+C:\Users\Boese\Documents\CST415\CST415-Computer-Networks\Assignment 4\CST 415 - Assignment 4 Handout v1.0\CST 415 - Assignment 4 Handout v1.0\PRSServer\PRSServer\bin\Debug\PRSServer.exe
+C:\Users\Boese\Documents\CST415\CST415-Computer-Networks\Assignment 4\CST 415 - Assignment 4 Handout v1.0\CST 415 - Assignment 4 Handout v1.0\PRSServer\PRSServer\bin\Debug\PRSServer.pdb
+C:\Users\Boese\Documents\CST415\CST415-Computer-Networks\Assignment 4\CST 415 - Assignment 4 Handout v1.0\CST 415 - Assignment 4 Handout v1.0\PRSServer\PRSServer\bin\Debug\PRSLib.dll
+C:\Users\Boese\Documents\CST415\CST415-Computer-Networks\Assignment 4\CST 415 - Assignment 4 Handout v1.0\CST 415 - Assignment 4 Handout v1.0\PRSServer\PRSServer\bin\Debug\PRSLib.pdb
+C:\Users\Boese\Documents\CST415\CST415-Computer-Networks\Assignment 4\CST 415 - Assignment 4 Handout v1.0\CST 415 - Assignment 4 Handout v1.0\PRSServer\PRSServer\obj\Debug\PRSServer.csprojAssemblyReference.cache
+C:\Users\Boese\Documents\CST415\CST415-Computer-Networks\Assignment 4\CST 415 - Assignment 4 Handout v1.0\CST 415 - Assignment 4 Handout v1.0\PRSServer\PRSServer\obj\Debug\PRSServer.csproj.CopyComplete
+C:\Users\Boese\Documents\CST415\CST415-Computer-Networks\Assignment 4\CST 415 - Assignment 4 Handout v1.0\CST 415 - Assignment 4 Handout v1.0\PRSServer\PRSServer\obj\Debug\PRSServer.exe
+C:\Users\Boese\Documents\CST415\CST415-Computer-Networks\Assignment 4\CST 415 - Assignment 4 Handout v1.0\CST 415 - Assignment 4 Handout v1.0\PRSServer\PRSServer\obj\Debug\PRSServer.pdb

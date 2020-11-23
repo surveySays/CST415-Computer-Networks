@@ -1,8 +1,8 @@
 ﻿// SDServerProgram.cs
 //
-// Pete Myers
+// Brennen Boese
 // CST 415
-// Fall 2019
+// Fall 2020
 // 
 
 using System;
@@ -37,11 +37,16 @@ namespace SDServer
             try
             {
                 // contact the PRS, request a port for "FT Server" and start keeping it alive
-                
+                PRSClient prs = new PRSClient(PRS_ADDRESS, PRS_PORT, SERVICE_NAME);
+                SDSERVER_PORT = prs.RequestPort();
+                prs.KeepPortAlive();
+
                 // instantiate SD server and start it running
-                
+                SDServer sd = new SDServer(SDSERVER_PORT, CLIENT_BACKLOG);
+                sd.Start();
+
                 // tell the PRS that it can have it's port back, we don't need it anymore
-                
+                prs.ClosePort();
             }
             catch (Exception ex)
             {

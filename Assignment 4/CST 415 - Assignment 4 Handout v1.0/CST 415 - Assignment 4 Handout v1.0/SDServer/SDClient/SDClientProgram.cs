@@ -26,7 +26,7 @@ namespace SDClient
 
         static void Main(string[] args)
         {
-            // TODO: SDClientProgram.Main()
+            //SDClientProgram.Main()
 
             // defaults
             string PRSSERVER_IPADDRESS = "127.0.0.1";
@@ -39,7 +39,30 @@ namespace SDClient
             string DOCUMENT_CMD = null;
             string DOCUMENT_NAME = null;
 
-            // process the command line arguments
+            //process the command line arguments
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] == "-o")
+                {
+                    SESSION_CMD = "-o";
+                }
+                else if (args[i] == "-c")
+                {
+                    SESSION_CMD = "-c";
+                    SESSION_ID = ulong.Parse(args[++i]);
+                }
+                else if (args[i] == "-r")
+                {
+                    SESSION_CMD = "-r";
+                    SESSION_ID = ulong.Parse(args[++i]);
+                }
+                else if (args[i] == "-post" || args[i] == "-get")
+                {
+                    DOCUMENT_CMD = args[i];
+                    DOCUMENT_NAME = args[++i];
+                }
+       
+            }
             
 
             Console.WriteLine("PRS Address: " + PRSSERVER_IPADDRESS);
@@ -53,43 +76,53 @@ namespace SDClient
             try
             {
                 // contact the PRS and lookup port for "SD Server"
-                
+                PRSClient prs = new PRSClient(PRSSERVER_IPADDRESS, PSRSERVER_PORT, SDSERVICE_NAME);
+                SDSERVER_PORT = prs.LookupPort();
+
                 // create an SDClient to use in talking to the server
-                
+                SDClient sd = new SDClient(SDSERVER_IPADDRESS, SDSERVER_PORT);
+                sd.Connect();
+
                 // send session command to server
                 if (SESSION_CMD == "-o")
                 {
                     // open new session
-                    
+                    sd.OpenSession();
                 }
                 else if (SESSION_CMD == "-r")
                 {
                     // resume existing session
+                    sd.ResumeSession(SESSION_ID);
                     
                 }
                 else if (SESSION_CMD == "-c")
                 {
                     // close existing session
-                    
+                    sd.SessionID = SESSION_ID;
+                    sd.CloseSession();
                 }
                 
                 // send document request to server
                 if (DOCUMENT_CMD == "-post")
                 {
                     // read the document contents from stdin
-                    
+                    string documentContents = Console.In.ReadToEnd();
+
                     // send the document to the server
-                    
+                    sd.PostDocument(DOCUMENT_NAME, documentContents);
                 }
                 else if (DOCUMENT_CMD == "-get")
                 {
                     // get document from the server
-                    
+                    string documentContents = sd.GetDocument(DOCUMENT_NAME);
+
                     // print out the received document
+                    Console.WriteLine("Received document content: " + documentContents);
                     
                 }
-                
+
                 // disconnect from the server
+                sd.Disconnect();
                 
             }
             catch (Exception ex)
