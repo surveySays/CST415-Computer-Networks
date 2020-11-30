@@ -61,7 +61,7 @@ namespace SDBrowser
         {
             // retrieve requested document from the specified server
             // manage the session with the SD Server
-            //  opening or resuming as needed
+            // opening or resuming as needed
             // connect to and disconnect from the server w/in this method
 
             // make sure we have valid parameters
@@ -75,29 +75,20 @@ namespace SDBrowser
 
             // contact the PRS and lookup port for "SD Server"
             PRSClient prs = new PRSClient(prsIP, prsPort, "SD Server");
-            ulong sdPort = prs.LookupPort();
+            ushort sdPort = prs.LookupPort();
 
             // connect to SD server by ipAddr and port
             // use OpenOrResumeSession() to ensure session is handled correctly
-            
-
-            // create network stream, reader and writer
-            
+            SDClient client = OpenOrResumeSession(serverIP, sdPort);
 
             // send get message to server for requested document
-            
-
-            // get the server's response
-            
-
-            // close writer, reader and network stream
-            
+            string content = client.GetDocument(documentName);
 
             // disconnect from server and close the socket
-            
+            client.Disconnect();
 
             // return the content
-            return "TODO";
+            return content;
         }
 
         public void Close()
@@ -115,115 +106,39 @@ namespace SDBrowser
 
         }
 
-        private Socket OpenOrResumeSession(string ipAddr, ushort port)
+        private SDClient OpenOrResumeSession(string ipAddr, ushort port)
         {
-            // TODO: SDProtocolClient.OpenOrResumeSession()
-
-            // create and connect a socket to the given SD Server
+            // create and connect an SDClient instance to the given SD Server
             // open or resume a session
-            // leave the socket open and return it for communication to the server
+            // leave the SDClient connected and return it for communication to the server
 
+            // create SDClient and connect to the server
             // connect to the SD Server's IP address and port
-            
-            // create network stream, reader and writer
-            
+            SDClient client = new SDClient(ipAddr, port);
+            client.Connect();
+
             // do we already have a session for this server?
-            // yes, session already open
-            // retrieve the sessionId and send resume message to server
-            // receive response and verify sessionId received
-                
-            // no, session not open for this server
-            // open a new session and save the sessionId
-            // receive response and verify sessionId received
-            // save this open session in the sessions dictionary for later
-            
-            // keep the socket open and return it
-            return null;
-        }
+            if (sessions.ContainsKey(ipAddr))
+            {
+                // yes, session already open
+                // retrieve the sessionId and send resume message to server
+                ulong sessionId = sessions[ipAddr].sessionId;
 
-        private static void SendOpen(StreamWriter writer)
-        {
-            // TODO: SDProtocolClient.SendOpen()
+                // rsume the session on the server
+                client.ResumeSession(sessionId);
+            }
+            else
+            {
+                // no, session not open for this server
+                // open a new session and save the sessionId
+                client.OpenSession();
 
-            // send open message to SD Server
+                // save this open session in the sessions dictionary for later
+                sessions[ipAddr] = new SDSession(ipAddr, port, client.SessionID);
+            }
 
-        }
-
-        private static void SendResume(StreamWriter writer, ulong sessionId)
-        {
-            // TODO: SDProtocolClient.SendResume()
-
-            // send resume message to SD Server
-
-        }
-
-        private static ulong ReceiveSessionResponse(StreamReader reader)
-        {
-            // TODO: SDProtocolClient.ReceiveSessionResponse()
-
-            // get server's response to our session request
-
-            // if accepted...
-            // yay, server accepted our session!
-            // get and return the sessionID
-
-
-            // if rejected
-            // boo, server rejected us!
-
-
-            // if error
-            // boo, server sent us an error!
-
-            // handle invalid response to our session request
-
-            return 0;
-        }
-
-        private static void SendClose(StreamWriter writer, ulong sessionId)
-        {
-            // TODO: SDProtocolClient.SendClose()
-
-            // send close message to SD Server
-
-        }
-
-        private static void SendGet(StreamWriter writer, string documentName)
-        {
-            // TODO: SDProtocolClient.SendGet()
-
-            // send get message to SD Server
-
-        }
-
-        private static string ReceiveGetResponse(StreamReader reader)
-        {
-            // TODO: SDProtocolClient.ReceiveGetResponse()
-
-            // get server's response to our get request and return the content received
-
-            // if success...
-            // yay, server accepted our request!
-            // read the document name, content length and content
-            // return the content
-
-            // if error
-            // boo, server sent us an error!
-
-            // handle invalid response to our session request
-
-            return "TODO";
-        }
-
-        private static string ReceiveDocument(StreamReader reader, int length)
-        {
-            // TODO: SDProtocolClient.ReceiveDocument()
-
-            // read from the reader until we've received the expected number of characters
-            // accumulate the characters into a string and return those when we got enough
-            
-
-            return "TODO";
+            // keep the client connected and return it
+            return client;
         }
     }
 }
