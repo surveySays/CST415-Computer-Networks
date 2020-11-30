@@ -12,6 +12,7 @@ using PRSLib;
 using System.Net;
 using System.Net.Sockets;
 using System.IO;
+using SDClientLib;
 
 namespace SDBrowser
 {
@@ -21,7 +22,7 @@ namespace SDBrowser
     //  appropriately opens or resumes a session
     //  closes the session when the protocol client is closed
     // retrieves a single requested "document" by name
-    // TODO: consider how this class could be implemented in terms of the SDClient class in SDClient project
+    // reuses the SDClient class in SDClient project
 
     class SDProtocolClient : IProtocolClient
     {
@@ -47,20 +48,17 @@ namespace SDBrowser
 
         public SDProtocolClient(string prsIP, ushort prsPort)
         {
-            // TODO: SDProtocolClient.SDProtocolClient()
-
             // save the PRS server's IP address and port
             // will be used later to lookup the port for the SD Server when needed
-            
+            this.prsIP = prsIP;
+            this.prsPort = prsPort;
 
             // initially empty dictionary of sessions
-            
+            sessions = new Dictionary<string, SDSession>();
         }
 
         public string GetDocument(string serverIP, string documentName)
         {
-            // TODO: SDProtocolClient.GetDocument()
-
             // retrieve requested document from the specified server
             // manage the session with the SD Server
             //  opening or resuming as needed
@@ -70,10 +68,14 @@ namespace SDBrowser
             // serverIP is the SD Server's IP address
             // documentName is the name of a docoument on the SD Server
             // both should not be empty
-            
+            if (String.IsNullOrWhiteSpace(serverIP) || String.IsNullOrWhiteSpace(documentName))
+            {
+                throw new Exception("Empty server IP or document Name!");
+            }
 
             // contact the PRS and lookup port for "SD Server"
-            
+            PRSClient prs = new PRSClient(prsIP, prsPort, "SD Server");
+            ulong sdPort = prs.LookupPort();
 
             // connect to SD server by ipAddr and port
             // use OpenOrResumeSession() to ensure session is handled correctly
