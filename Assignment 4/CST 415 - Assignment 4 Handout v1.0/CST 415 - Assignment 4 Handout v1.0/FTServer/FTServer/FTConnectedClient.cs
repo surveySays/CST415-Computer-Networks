@@ -144,6 +144,10 @@ namespace FTServer
             {
                 Console.WriteLine("[" + clientThread.ManagedThreadId.ToString() + "] " + "Error on client socket, closing connection: " + se.Message);
             }
+            catch (IOException ioe)
+            {
+                Console.WriteLine("[" + clientThread.ManagedThreadId.ToString() + "] " + "Error on client socket, closing connection: " + ioe.Message);
+            }
 
             // close the client's writer, reader, network stream and socket
             writer.Close();

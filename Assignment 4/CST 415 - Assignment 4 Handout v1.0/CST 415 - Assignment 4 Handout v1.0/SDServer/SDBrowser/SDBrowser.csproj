@@ -85,6 +85,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\FTServer\FTClientLib\FTClientLib.csproj">
+      <Project>{2ab14057-71e6-4685-804f-7ea6e26bf56e}</Project>
+      <Name>FTClientLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\PRSServer\PRSLib\PRSLib.csproj">
       <Project>{7df7f66b-d68d-4ddd-9326-988b6e6b2abc}</Project>
       <Name>PRSLib</Name>

@@ -1,8 +1,8 @@
 ﻿// SDProtocolClient.cs
 //
-// Pete Myers
+// Brennen Boese
 // CST 415
-// Fall 2019
+// Fall 2020
 // 
 
 using System;
@@ -93,17 +93,23 @@ namespace SDBrowser
 
         public void Close()
         {
-            // TODO: SDProtocolClient.Close()
-
             // close each open session with the various servers
 
             // for each session...
-            // connect to the SD Server's IP address and port
-            // create network stream, reader and writer
-            // send the close for this sessionId
-            // close writer, reader and network stream
-            // disconnect from server and close the socket
+            foreach (SDSession session in sessions.Values)
+            {
+                // connect to the SD Server's IP address and port
+                SDClient client = new SDClient(session.ipAddr, session.port);
+                client.Connect();
 
+                // send the close for this sessionId
+                client.SessionID = session.sessionId;
+                client.CloseSession();
+
+                // disconnect from server and close the socket
+                client.Disconnect();
+            }
+            sessions.Clear();
         }
 
         private SDClient OpenOrResumeSession(string ipAddr, ushort port)

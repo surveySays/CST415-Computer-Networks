@@ -25,3 +25,5 @@ C:\Users\Boese\Documents\CST415\CST415-Computer-Networks\Assignment 4\CST 415 - 
 C:\Users\Boese\Documents\CST415\CST415-Computer-Networks\Assignment 4\CST 415 - Assignment 4 Handout v1.0\CST 415 - Assignment 4 Handout v1.0\FTServer\FTClient\obj\Debug\FTClient.csproj.CopyComplete
 C:\Users\Boese\Documents\CST415\CST415-Computer-Networks\Assignment 4\CST 415 - Assignment 4 Handout v1.0\CST 415 - Assignment 4 Handout v1.0\FTServer\FTClient\obj\Debug\FTClient.exe
 C:\Users\Boese\Documents\CST415\CST415-Computer-Networks\Assignment 4\CST 415 - Assignment 4 Handout v1.0\CST 415 - Assignment 4 Handout v1.0\FTServer\FTClient\obj\Debug\FTClient.pdb
+C:\Users\Boese\Documents\CST415\CST415-Computer-Networks\Assignment 4\CST 415 - Assignment 4 Handout v1.0\CST 415 - Assignment 4 Handout v1.0\FTServer\FTClient\bin\Debug\FTClientLib.dll
+C:\Users\Boese\Documents\CST415\CST415-Computer-Networks\Assignment 4\CST 415 - Assignment 4 Handout v1.0\CST 415 - Assignment 4 Handout v1.0\FTServer\FTClient\bin\Debug\FTClientLib.pdb

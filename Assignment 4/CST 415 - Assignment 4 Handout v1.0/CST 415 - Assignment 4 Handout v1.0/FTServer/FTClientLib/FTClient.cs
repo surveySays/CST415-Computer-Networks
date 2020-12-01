@@ -10,11 +10,24 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.IO;
+using System.Collections.Generic;
 
-namespace FTClient
+namespace FTClientLib
 {
-    class FTClient
+    public class FTClient
     {
+        public class FileContent
+        { 
+            public string Name { get; private set; }
+            public string Content { get; private set; }
+
+            public FileContent(string name, string content)
+            {
+                Name = name;
+                Content = content;
+            }
+        }
+
         private string ftServerAddress;
         private ushort ftServerPort;
         private bool connected;
@@ -86,7 +99,7 @@ namespace FTClient
             }
         }
 
-        public void GetDirectory(string directoryName)
+        public FileContent[] GetDirectory(string directoryName)
         {
             // send get to the server for the specified directory and receive files
             if (connected)
@@ -95,12 +108,18 @@ namespace FTClient
                 SendGet(directoryName);
 
                 // receive and process files
-                while (ReceiveFile(directoryName))
+                List<FileContent> files = new List<FileContent>();
+                FileContent file;
+                while ((file = ReceiveFile(directoryName)) != null)
                 {
+                    files.Add(file);
                     Console.WriteLine("FTClient.GetDirectory() - recieved a file");
                 }
 
+                return files.ToArray();
             }
+
+            throw new Exception("Can't get directory contents when not connected!");
         }
 
         #region implementation
@@ -132,9 +151,9 @@ namespace FTClient
 
         }
 
-        private bool ReceiveFile(string directoryName)
+        private FileContent ReceiveFile(string directoryName)
         {
-            // receive a single file from the server and save it locally in the specified directory
+            // receive a single file from the server and return it
 
             // expect file name from server
             string fileName = reader.ReadLine();
@@ -143,7 +162,7 @@ namespace FTClient
             if (fileName == "done")
             {
                 Console.WriteLine("FTClient.RecieveFile() - recieved done");
-                return false;
+                return null;
             }
 
             // handle error messages from the server
@@ -152,7 +171,7 @@ namespace FTClient
                 Console.WriteLine("FTClient.RecieveFile() - recieved error");
                 string errorMsg = reader.ReadLine();
                 Console.WriteLine("Error! " + errorMsg);
-                return false;
+                throw new Exception(errorMsg);
             }
 
             // received a file name
@@ -175,13 +194,7 @@ namespace FTClient
                 fileContents.Append(buffer);
             }
 
-            // create the local directory if needed
-            Directory.CreateDirectory(directoryName);
-
-            // save the file locally on the disk
-            File.WriteAllText(Path.Combine(directoryName, fileName), fileContents.ToString());
-
-            return true;
+            return new FileContent(fileName, fileContents.ToString());
         }
 
         #endregion

@@ -7,6 +7,8 @@
 
 using System;
 using PRSLib;
+using FTClientLib;
+using System.IO;
 
 namespace FTClient
 {
@@ -83,11 +85,20 @@ namespace FTClient
                 FTSERVER_PORT = prs.LookupPort();
 
                 // create an FTClient and connect it to the server
-                FTClient ft = new FTClient(FTSERVER_IPADDRESS, FTSERVER_PORT);
+                FTClientLib.FTClient ft = new FTClientLib.FTClient(FTSERVER_IPADDRESS, FTSERVER_PORT);
                 ft.Connect();
 
                 // get the contents of the specified directory
-                ft.GetDirectory(DIRECTORY_NAME);
+                FTClientLib.FTClient.FileContent[] files = ft.GetDirectory(DIRECTORY_NAME);
+
+                // create the local directory if needed
+                Directory.CreateDirectory(DIRECTORY_NAME);
+
+                // save the file locally on the disk
+                foreach (FTClientLib.FTClient.FileContent file in files)
+                {
+                    File.WriteAllText(Path.Combine(DIRECTORY_NAME, file.Name), file.Content);
+                }
 
                 // disconnect from the server
                 ft.Disconnect();

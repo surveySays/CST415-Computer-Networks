@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SDBrowser", "SDBrowser\SDBr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SDClientLib", "SDClientLib\SDClientLib.csproj", "{09734933-481F-4EA8-B083-33DE2D41A9B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FTClientLib", "..\FTServer\FTClientLib\FTClientLib.csproj", "{2AB14057-71E6-4685-804F-7EA6E26BF56E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{09734933-481F-4EA8-B083-33DE2D41A9B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09734933-481F-4EA8-B083-33DE2D41A9B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09734933-481F-4EA8-B083-33DE2D41A9B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AB14057-71E6-4685-804F-7EA6E26BF56E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AB14057-71E6-4685-804F-7EA6E26BF56E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AB14057-71E6-4685-804F-7EA6E26BF56E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AB14057-71E6-4685-804F-7EA6E26BF56E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

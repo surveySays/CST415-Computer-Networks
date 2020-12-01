@@ -1,0 +1,5 @@
+C:\Users\Boese\Documents\CST415\CST415-Computer-Networks\Assignment 4\CST 415 - Assignment 4 Handout v1.0\CST 415 - Assignment 4 Handout v1.0\FTServer\FTClientLib\bin\Debug\FTClientLib.dll
+C:\Users\Boese\Documents\CST415\CST415-Computer-Networks\Assignment 4\CST 415 - Assignment 4 Handout v1.0\CST 415 - Assignment 4 Handout v1.0\FTServer\FTClientLib\bin\Debug\FTClientLib.pdb
+C:\Users\Boese\Documents\CST415\CST415-Computer-Networks\Assignment 4\CST 415 - Assignment 4 Handout v1.0\CST 415 - Assignment 4 Handout v1.0\FTServer\FTClientLib\obj\Debug\FTClientLib.dll
+C:\Users\Boese\Documents\CST415\CST415-Computer-Networks\Assignment 4\CST 415 - Assignment 4 Handout v1.0\CST 415 - Assignment 4 Handout v1.0\FTServer\FTClientLib\obj\Debug\FTClientLib.pdb
+C:\Users\Boese\Documents\CST415\CST415-Computer-Networks\Assignment 4\CST 415 - Assignment 4 Handout v1.0\CST 415 - Assignment 4 Handout v1.0\FTServer\FTClientLib\obj\Debug\FTClientLib.csprojAssemblyReference.cache
